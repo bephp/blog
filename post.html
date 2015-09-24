@@ -1,0 +1,21 @@
+
+<div>
+<div tal:condition="isset($user)">
+<h1 tal:content="isset($post) ? 'Edit Post' : 'Create Post'">Create Post</h1>
+<form method="POST">
+  <input type="hidden" name="user_id" tal:value="$user->id" />
+  <label for="title">Title</label>
+  <input type="text" name="title" tal:value="$post->title" />
+  <br />
+  <label for="content">Content</label>
+  <textarea name="content" tal:content="$post->content"></textarea>
+  <input type="submit" name="submit" value="submit" />
+</form>
+</div>
+<div tal:condition="!isset($user)">
+  <h1 tal:content="$post->title">View Post</h1>
+  <pre tal:content="$post->content"></pre>
+  <span tal:content="$post->author->name"></span>
+</div>
+<a href="/posts">Home</a>
+</div>

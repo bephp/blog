@@ -1,0 +1,16 @@
+
+<div>
+  <h1>Posts</h1>
+  <a href="/post/create">Create Post</a>
+  <ul tal:condition="isset($posts)">
+    <li tal:repeat="$posts as $key => $post" >
+      <h2 tal:content="$post->title"></h2>
+      <span tal:content="date('Y-m-d H:i:s', $post->time)"></span>
+      <pre tal:content="$post->content"></pre>
+      <span tal:content="'Post by: '. $post->author->name"></span>
+      <a tal:href="'/post/'. $post->id. '/edit'">Edit Post</a>
+      <a tal:href="'/post/'. $post->id">View Post</a>
+      <a tal:href="'/post/'. $post->id. '/delete'">Delete Post</a>
+    </li>
+  </ul>
+</div>
