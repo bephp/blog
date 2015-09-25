@@ -9,6 +9,9 @@
   <br />
   <label for="content">Content</label>
   <textarea name="content" tal:content="$post->content"></textarea>
+  <br />
+  <label for="tag">Tags</label>
+  <input type="text" name="tag" tal:value="isset($post)?$post->strtag():''" />
   <input type="submit" name="submit" value="submit" />
 </form>
 </div>
@@ -16,6 +19,7 @@
   <h1 tal:content="$post->title">View Post</h1>
   <pre tal:content="$post->content"></pre>
   <span tal:content="$post->author->name"></span>
+  <span tal:content="$post->strtag()"></span>
 </div>
 <a href="/posts">Home</a>
 </div>

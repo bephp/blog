@@ -1,5 +1,16 @@
-
 <div>
+<div tal:condition="isset($tags)">
+  <h1>Posts</h1>
+  <a href="/post/create">Create Post</a>
+  <ul tal:condition="isset($tags)">
+    <li tal:repeat="$tags as $key => $tag" >
+      <h2 tal:content="$tag->name"></h2>
+      <span tal:content="$tag->count"></span>
+      <a tal:href="'/tag/'. $tag->id. '/post'">List Post</a>
+    </li>
+  </ul>
+</div>
+<div tal:condition="isset($posts)">
   <h1>Posts</h1>
   <a href="/post/create">Create Post</a>
   <ul tal:condition="isset($posts)">
@@ -13,4 +24,5 @@
       <a tal:href="'/post/'. $post->id. '/delete'">Delete Post</a>
     </li>
   </ul>
+</div>
 </div>
