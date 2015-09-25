@@ -2,6 +2,7 @@
 <div>
 <div tal:condition="isset($user)">
 <h1 tal:content="isset($post) ? 'Edit Post' : 'Create Post'">Create Post</h1>
+<hr />
 <form method="POST">
   <input type="hidden" name="user_id" tal:value="$user->id" />
   <label for="title">Title</label>
@@ -11,15 +12,24 @@
   <textarea name="content" tal:content="$post->content"></textarea>
   <br />
   <label for="tag">Tags</label>
-  <input type="text" name="tag" tal:value="isset($post)?$post->strtag():''" />
+  <input type="text" name="tag" tal:value="isset($post)?implode(', ', $post->getTags()):''" />
   <input type="submit" name="submit" value="submit" />
 </form>
 </div>
 <div tal:condition="!isset($user)">
   <h1 tal:content="$post->title">View Post</h1>
-  <pre tal:content="$post->content"></pre>
+  <hr />
+  <pre tal:content="'Post by: '. $post->content"></pre>
   <span tal:content="$post->author->name"></span>
-  <span tal:content="$post->strtag()"></span>
+  <a tal:href="'/post/'. $post->id. '/edit'">Edit</a>
+  <a tal:href="'/post/'. $post->id. '/delete'">Delete</a>
+  <br />
+  <b>Tags:</b>
+  <span tal:repeat="$post->tags as $i=>$tag">
+    <a tal:href="'/tag/'. $tag->tag->id. '/post'" tal:content="$tag->tag->name"></a>
+  </span>
 </div>
+<hr />
 <a href="/posts">Home</a>
+<a href="/tags">Tags</a>
 </div>

@@ -17,8 +17,41 @@ class Post extends ActiveRecord{
         'tags' => array(self::HAS_MANY, 'Post2Tag', 'post_id'),
         'author' => array(self::BELONGS_TO, 'User', 'user_id'),
     );
-    public function strtag(){
-        return implode(', ', array_map(function($tag){return $tag->tag->name;}, $this->tags));
+    public function getTags(){
+        return array_map(function($tag){
+            return $tag->tag->name;
+        }, $this->tags);
+    }
+    function updateTag($tags){
+        $tags = array_map(function($t){ return trim($t); }, explode(',', $tags));
+        foreach($this->tags as $i=>$tag){
+            $key = array_search($tag->tag->name, $tags);
+            if (false === $key){
+                $tag->tag->count = $tag->tag->count - 1;
+                if ($tag->tag->count > 0)
+                    $tag->tag->update();
+                else
+                    $tag->tag->delete();
+                $tag->delete();
+            } else unset($tags[$key]);//do not change tag
+        }
+        foreach($tags as $i=>$t){
+            $tag = new Tag();
+            $post2tag = new Post2Tag();
+            $tag->reset()->eq('name', $t)->find();
+            if (!$tag->id){
+                $tag->name = $t;
+                $tag->count = 1;
+                $tag->insert();
+            }else{
+                $tag->count = $tag->count + 1;
+                $tag->update();
+            }
+            $post2tag->tag_id = $tag->id;
+            $post2tag->post_id = $this->id;
+            $post2tag->insert();
+        }
+        return $this;
     }
 }
 
@@ -29,8 +62,8 @@ class Tag extends ActiveRecord{
 class Post2Tag extends ActiveRecord{
     public $table = 'post_tag';
     public $relations = array(
-        'post' => array(self::HAS_ONE, 'Post', 'post_id'),
-        'tag' => array(self::HAS_ONE, 'Tag', 'tag_id'),
+        'post' => array(self::BELONGS_TO, 'Post', 'post_id'),
+        'tag' => array(self::BELONGS_TO, 'Tag', 'tag_id'),
     );
 }
 
@@ -39,50 +72,28 @@ map('GET', '/install', function(){
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT,content TEXT, time INTEGER);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS tag (id INTEGER PRIMARY KEY, name TEXT, count INTEGER);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post_tag (id INTEGER PRIMARY KEY, post_id INTEGER, tag_id INTEGER);");
-    echo 'Success to create tables.<br />';
     $user = new User();
     $user->name = 'admin';
     $user->email = 'admin@example.com';
     $user->password = md5('admin');
     $user->insert();
-    echo 'Success to create user.';
+    redirect('/posts');
 });
 function get_post($id=null){
-    $post = new Post();
-    return $post->eq('id', (int)($id?$id:1))->find();
+    return (new Post())->eq('id', (int)($id?$id:1))->find();
 }
 function get_user($id=null){
-    $user = new User();
-    return $user->eq('id', (int)($id?$id:1))->find();
-}
-function update_tag($post, $tags){
-    foreach(array_map(function($t){ return trim($t); }, explode(',', $tags)) as $i => $t){
-        $tag = new Tag();
-        $post2tag = new Post2Tag();
-        if (!$tag->eq('name', $t)->find()){
-            $tag->name = $t;
-            $tag->count = 1;
-            $tag->insert();
-        } else {
-            $tag->count = $tag->count + 1;
-            $tag->update();
-        }
-        var_dump($tag);
-        if(!$post2tag->eq('post_id', $post->id)->eq('tag_id', $tag->id)->find()){
-            $post2tag->tag_id = $tag->id;
-            $post2tag->post_id = $post->id;
-            $post2tag->insert();
-        }
-        var_dump($post2tag);
-    }
+    return (new User())->eq('id', (int)($id?$id:1))->find();
 }
 map('GET', '/tags', function(){
-    $tag = new Tag();
-    MicroTpl::render('list.html', array('tags'=>$tag->orderby('count desc')->findAll()));
+    MicroTpl::render('list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()));
+});
+map('GET', '/tag/<id:\d+>/post', function($p){
+    $tags = (new Post2Tag())->eq('tag_id', (int)$p['id'])->findAll();
+    MicroTpl::render('list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)));
 });
 map('GET', '/posts', function(){
-    $post = new Post();
-    MicroTpl::render('list.html', array('posts'=>$post->orderby('time desc')->findAll()));
+    MicroTpl::render('list.html', array('posts'=>(new Post())->orderby('time desc')->findAll()));
 });
 map('GET', '/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
@@ -95,12 +106,10 @@ map('POST', '/post/create', function(){
     $post->content = $_POST['content'];
     $post->time = time();
     $post->insert();
-    update_tag($post, $_POST['tag']);
-    redirect('/post/'. $post->id);
+    redirect('/post/'. $post->updateTag($_POST['tag'])->id);
 });
 map('GET', '/post/<id:\d+>', function($p){
-    $post = get_post($p['id']);
-    MicroTpl::render('post.html', array('post'=>$post));
+    MicroTpl::render('post.html', array('post'=>get_post($p['id'])));
 });
 map('GET', '/post/<id:\d+>/delete', function($p){
     $post = get_post($p['id']);
@@ -116,7 +125,7 @@ map('POST', '/post/<id:\d+>/edit', function($p){
     $post->title = $_POST['title'];
     $post->content = $_POST['content'];
     $post->update();
-    update_tag($post, $_POST['tag']);
+    $post->updateTag($_POST['tag']);
     redirect('/post/'. $post->id);
 });
 dispatch();
