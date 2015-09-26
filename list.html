@@ -20,7 +20,7 @@
       <pre tal:content="$post->content"></pre>
       <span tal:content="'Post by: '. $post->author->name"></span>
       <a tal:href="'/post/'. $post->id. '/edit'">Edit Post</a>
-      <a tal:href="'/post/'. $post->id">View Post</a>
+      <a tal:href="'/post/'. $post->id. '/view'">View Post</a>
       <a tal:href="'/post/'. $post->id. '/delete'">Delete Post</a>
     </li>
   </ul>

@@ -24,6 +24,7 @@ class Post extends ActiveRecord{
     }
     function updateTag($tags){
         $tags = array_map(function($t){ return trim($t); }, explode(',', $tags));
+        $tags = array_filter($tags, function($t){ return strlen($t)>0; });
         foreach($this->tags as $i=>$tag){
             $key = array_search($tag->tag->name, $tags);
             if (false === $key){
@@ -67,7 +68,14 @@ class Post2Tag extends ActiveRecord{
     );
 }
 
-map('GET', '/install', function(){
+function get_post($id=null){
+    return (new Post())->eq('id', (int)($id?$id:1))->find();
+}
+function get_user($id=null){
+    return (new User())->eq('id', (int)($id?$id:1))->find();
+}
+(new Router())
+->get('/install', function(){
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT,content TEXT, time INTEGER);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS tag (id INTEGER PRIMARY KEY, name TEXT, count INTEGER);");
@@ -78,27 +86,21 @@ map('GET', '/install', function(){
     $user->password = md5('admin');
     $user->insert();
     redirect('/posts');
-});
-function get_post($id=null){
-    return (new Post())->eq('id', (int)($id?$id:1))->find();
-}
-function get_user($id=null){
-    return (new User())->eq('id', (int)($id?$id:1))->find();
-}
-map('GET', '/tags', function(){
+})
+->get('/tags', function(){
     MicroTpl::render('list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()));
-});
-map('GET', '/tag/<id:\d+>/post', function($p){
-    $tags = (new Post2Tag())->eq('tag_id', (int)$p['id'])->findAll();
+})
+->get('/tag/:id/post', function($id){
+    $tags = (new Post2Tag())->eq('tag_id', (int)$id)->findAll();
     MicroTpl::render('list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)));
-});
-map('GET', '/posts', function(){
+})
+->get('/posts', function(){
     MicroTpl::render('list.html', array('posts'=>(new Post())->orderby('time desc')->findAll()));
-});
-map('GET', '/post/create', function(){
+})
+->get('/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
-});
-map('POST', '/post/create', function(){
+})
+->post('/post/create', function(){
     $uid = (int)($_POST['user_id']);
     $post = new Post();
     $post->user_id = $uid;
@@ -106,28 +108,29 @@ map('POST', '/post/create', function(){
     $post->content = $_POST['content'];
     $post->time = time();
     $post->insert();
-    redirect('/post/'. $post->updateTag($_POST['tag'])->id);
-});
-map('GET', '/post/<id:\d+>', function($p){
-    MicroTpl::render('post.html', array('post'=>get_post($p['id'])));
-});
-map('GET', '/post/<id:\d+>/delete', function($p){
-    $post = get_post($p['id']);
+    redirect('/post/'. $post->updateTag($_POST['tag'])->id. '/view');
+})
+->get('/post/:id/delete', function($id){
+    $post = get_post($id);
+    $post->updateTag('');
     $post->delete();
     redirect('/posts');
-});
-map('GET', '/post/<id:\d+>/edit', function($p){
-    $post = get_post($p['id']);
+})
+->get('/post/:id/edit', function($id){
+    $post = get_post($id);
     MicroTpl::render('post.html', array('user'=>$post->author, 'post'=>$post));
-});
-map('POST', '/post/<id:\d+>/edit', function($p){
-    $post = get_post($p['id']);
+})
+->post('/post/:id/edit', function($id){
+    $post = get_post($id);
     $post->title = $_POST['title'];
     $post->content = $_POST['content'];
     $post->update();
     $post->updateTag($_POST['tag']);
-    redirect('/post/'. $post->id);
-});
-dispatch();
+    redirect('/post/'. $post->id. '/view');
+})
+->get('/post/:id/view', function($id){
+    MicroTpl::render('post.html', array('post'=>get_post($id)));
+})
+->execute(array());
 
 

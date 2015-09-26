@@ -19,8 +19,8 @@
 <div tal:condition="!isset($user)">
   <h1 tal:content="$post->title">View Post</h1>
   <hr />
-  <pre tal:content="'Post by: '. $post->content"></pre>
-  <span tal:content="$post->author->name"></span>
+  <pre tal:content="$post->content"></pre>
+  <span tal:content="'Post by: '. $post->author->name"></span>
   <a tal:href="'/post/'. $post->id. '/edit'">Edit</a>
   <a tal:href="'/post/'. $post->id. '/delete'">Delete</a>
   <br />
