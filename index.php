@@ -24,6 +24,7 @@ class Post extends ActiveRecord{
     }
     function updateTag($tags){
         $tags = array_map(function($t){ return trim($t); }, explode(',', $tags));
+        $tags = array_filter($tags, function($t){ return strlen($t)>0; });
         foreach($this->tags as $i=>$tag){
             $key = array_search($tag->tag->name, $tags);
             if (false === $key){
@@ -111,6 +112,7 @@ function get_user($id=null){
 })
 ->get('/post/:id/delete', function($id){
     $post = get_post($id);
+    $post->updateTag('');
     $post->delete();
     redirect('/posts');
 })
