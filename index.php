@@ -75,7 +75,7 @@ function get_user($id=null){
     return (new User())->eq('id', (int)($id?$id:1))->find();
 }
 (new Router())
-->get('/istall', function(){
+->get('/install', function(){
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT,content TEXT, time INTEGER);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS tag (id INTEGER PRIMARY KEY, name TEXT, count INTEGER);");
