@@ -131,6 +131,6 @@ function get_user($id=null){
 ->get('/post/:id/view', function($id){
     MicroTpl::render('post.html', array('post'=>get_post($id)));
 })
-->execute($_SERVER['REQUEST_METHOD'], $_SERVER['PATH_INFO'], array());
+->execute(array());
 
 

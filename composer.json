@@ -1,8 +1,7 @@
 {
     "require": {
-        "badphp/dispatch": "^8.0",
         "lloydzhou/microtpl": "^1.0",
         "lloydzhou/activerecord": "^2.0",
-        "lloydzhou/router": "^0.1.0"
+        "lloydzhou/router": "^0.2.0"
     }
 }
