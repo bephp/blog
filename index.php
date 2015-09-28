@@ -75,8 +75,14 @@ function get_user($id=null){
     return (new User())->eq('id', (int)($id?$id:1))->find();
 }
 (new Router())
-->error(405, function(){ redirect('/posts'); })
-->get('/install', function(){
+->error(302, function($path, $halt=false){
+    header("Location: {$path}", true, 302);
+    $halt && exit();
+})
+->error(405, function($message){
+    header("Location: /posts", true, 302);
+})
+->get('/install', function($router){
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT,content TEXT, time INTEGER);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS tag (id INTEGER PRIMARY KEY, name TEXT, count INTEGER);");
@@ -86,7 +92,7 @@ function get_user($id=null){
     $user->email = 'admin@example.com';
     $user->password = md5('admin');
     $user->insert();
-    redirect('/posts');
+    $router->error(302, '/posts');
 })
 ->get('/tags', function(){
     MicroTpl::render('list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()));
@@ -101,7 +107,7 @@ function get_user($id=null){
 ->get('/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
 })
-->post('/post/create', function(){
+->post('/post/create', function($router){
     $uid = (int)($_POST['user_id']);
     $post = new Post();
     $post->user_id = $uid;
@@ -109,25 +115,25 @@ function get_user($id=null){
     $post->content = $_POST['content'];
     $post->time = time();
     $post->insert();
-    redirect('/post/'. $post->updateTag($_POST['tag'])->id. '/view');
+    $router->error(302, '/post/'. $post->updateTag($_POST['tag'])->id. '/view');
 })
-->get('/post/:id/delete', function($id){
+->get('/post/:id/delete', function($id, $router){
     $post = get_post($id);
     $post->updateTag('');
     $post->delete();
-    redirect('/posts');
+    $router->error(302, '/posts');
 })
 ->get('/post/:id/edit', function($id){
     $post = get_post($id);
     MicroTpl::render('post.html', array('user'=>$post->author, 'post'=>$post));
 })
-->post('/post/:id/edit', function($id){
+->post('/post/:id/edit', function($id, $router){
     $post = get_post($id);
     $post->title = $_POST['title'];
     $post->content = $_POST['content'];
     $post->update();
     $post->updateTag($_POST['tag']);
-    redirect('/post/'. $post->id. '/view');
+    $router->error(302, '/post/'. $post->id. '/view');
 })
 ->get('/post/:id/view', function($id){
     MicroTpl::render('post.html', array('post'=>get_post($id)));
