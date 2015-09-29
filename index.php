@@ -107,15 +107,14 @@ function get_user($id=null){
 ->get('/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
 })
-->post('/post/create', function($router){
-    $uid = (int)($_POST['user_id']);
+->post('/post/create', function($router, $user_id, $title, $content, $tag){
     $post = new Post();
-    $post->user_id = $uid;
-    $post->title = $_POST['title'];
-    $post->content = $_POST['content'];
+    $post->user_id = (int)($user_id);
+    $post->title = $title;
+    $post->content = $content;
     $post->time = time();
     $post->insert();
-    $router->error(302, '/post/'. $post->updateTag($_POST['tag'])->id. '/view');
+    $router->error(302, '/post/'. $post->updateTag($tag)->id. '/view');
 })
 ->get('/post/:id/delete', function($id, $router){
     $post = get_post($id);
@@ -127,12 +126,12 @@ function get_user($id=null){
     $post = get_post($id);
     MicroTpl::render('post.html', array('user'=>$post->author, 'post'=>$post));
 })
-->post('/post/:id/edit', function($id, $router){
+->post('/post/:id/edit', function($id, $router, $title, $content, $tag){
     $post = get_post($id);
-    $post->title = $_POST['title'];
-    $post->content = $_POST['content'];
+    $post->title = $title;
+    $post->content = $content;
     $post->update();
-    $post->updateTag($_POST['tag']);
+    $post->updateTag($tag);
     $router->error(302, '/post/'. $post->id. '/view');
 })
 ->get('/post/:id/view', function($id){
