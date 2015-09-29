@@ -18,7 +18,7 @@
       <h2 tal:content="$post->title"></h2>
       <span tal:content="date('Y-m-d H:i:s', $post->time)"></span>
       <pre tal:content="$post->content"></pre>
-      <span tal:content="'Post by: '. $post->author->name"></span>
+      <span>Post by: <a tal:href="'/user/'. $post->author->id. '/post'" tal:content="$post->author->name">admin</a></span>
       <a tal:href="'/post/'. $post->id. '/edit'">Edit Post</a>
       <a tal:href="'/post/'. $post->id. '/view'">View Post</a>
       <a tal:href="'/post/'. $post->id. '/delete'">Delete Post</a>

@@ -97,6 +97,9 @@ function get_user($id=null){
 ->get('/tags', function(){
     MicroTpl::render('list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()));
 })
+->get('/user/:id/post', function($id){
+    MicroTpl::render('list.html', array('posts'=>get_user($id)->posts));
+})
 ->get('/tag/:id/post', function($id){
     $tags = (new Post2Tag())->eq('tag_id', (int)$id)->findAll();
     MicroTpl::render('list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)));
