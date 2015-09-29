@@ -108,11 +108,8 @@ function get_user($id=null){
     MicroTpl::render('post.html', array('user'=>get_user()));
 })
 ->post('/post/create', function($router, $user_id, $title, $content, $tag){
-    $post = new Post();
-    $post->user_id = (int)($user_id);
-    $post->title = $title;
-    $post->content = $content;
-    $post->time = time();
+    // another way to init model.
+    $post = new Post(array('user_id'=>(int)($user_id), 'title'=>$title, 'content'=>$content, 'time'=>time()));
     $post->insert();
     $router->error(302, '/post/'. $post->updateTag($tag)->id. '/view');
 })
