@@ -74,7 +74,20 @@ function get_post($id=null){
 function get_user($id=null){
     return (new User())->eq('id', (int)($id?$id:1))->find();
 }
-(new Router())
+/**
+ * PRODUCTION
+ * after compiled code to "index.inc", just need to include the source code and execute it with parameters.
+ */
+/*
+$router = include('index.inc');
+$router->execute();
+ */
+
+/**
+ * DEV
+ * using CRouter to compile plain array source code into "index.inc"
+ */
+(new CRouter('index.inc'))
 ->error(302, function($path, $halt=false){
     header("Location: {$path}", true, 302);
     $halt && exit();
