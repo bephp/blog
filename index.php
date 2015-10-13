@@ -96,7 +96,7 @@ $router->execute();
     header("Location: /posts", true, 302);
 })
 ->delete('/uninstall', function($router){
-    @unlink('blog.db');
+    //@unlink('blog.db');
     $router->error(302, '/install');
 })
 ->get('/install', function($router){

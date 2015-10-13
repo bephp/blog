@@ -39,7 +39,7 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
     }
     /**
      * @requires PHP 5.4
-     * @depends testInstall
+     * @depends testPostCreate
      */
     public function testPostEdit($postId){
         $response = $this->getRequest()->post('http://127.0.0.1:8889/post/'. $postId. '/edit', array('id' => $postId, 'title'=>'title', 'content' => 'content', 'tag' => 'test,title,content,edit'));
