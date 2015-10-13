@@ -9,16 +9,6 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
     /**
      * @requires PHP 5.4
      */
-    public function testUnInstall(){
-        $response = $this->getRequest()->delete('http://127.0.0.1:8889/uninstall');
-        $this->assertEquals(302, $response->getHttpCode());
-        $this->assertEmpty($response->getContent());
-        $this->assertEquals('/install', $response->getHeader()->getLocation());
-    }
-    /**
-     * @requires PHP 5.4
-     * @depends testUnInstall
-     */
     public function testInstall(){
         $response = $this->getRequest()->get('http://127.0.0.1:8889/install');
         $this->assertEquals(302, $response->getHttpCode());
