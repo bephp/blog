@@ -95,6 +95,10 @@ $router->execute();
 ->error(405, function($message){
     header("Location: /posts", true, 302);
 })
+->delete('/uninstall', function($router){
+    @unlink('blog.db');
+    $router->error(302, '/install');
+})
 ->get('/install', function($router){
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT);");
     ActiveRecord::execute("CREATE TABLE IF NOT EXISTS post (id INTEGER PRIMARY KEY, user_id INTEGER, title TEXT,content TEXT, time INTEGER);");

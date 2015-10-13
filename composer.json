@@ -2,6 +2,10 @@
     "require": {
         "lloydzhou/microtpl": "^1.0",
         "lloydzhou/activerecord": "^2.0",
-        "lloydzhou/router": "^0.4"
+        "lloydzhou/router": "^1.0"
+    },
+    "require-dev":{
+        "lloydzhou/request": "*",
+        "phpunit/phpunit": "*"
     }
 }
