@@ -1,4 +1,5 @@
 # BLOG
+[![Build Status](https://travis-ci.org/lloydzhou/blog.svg)](https://travis-ci.org/lloydzhou/blog)
 
 demo for using [Router](https://github.com/lloydzhou/router), [ActiveRecord](https://github.com/lloydzhou/activerecord) and [MicroTpl](https://github.com/lloydzhou/microtpl).
 
