@@ -1,8 +1,6 @@
 {
     "require": {
-        "lloydzhou/microtpl": "^1.0",
-        "lloydzhou/activerecord": "^2.0",
-        "lloydzhou/router": "^1.0"
+        "lloydzhou/micro": "^1.0"
     },
     "require-dev":{
         "lloydzhou/request": "*",
