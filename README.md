@@ -1,5 +1,6 @@
 # BLOG
 [![Build Status](https://travis-ci.org/lloydzhou/blog.svg)](https://travis-ci.org/lloydzhou/blog)
+[![Coverage Status](https://coveralls.io/repos/lloydzhou/blog/badge.svg?branch=master&service=github)](https://coveralls.io/github/lloydzhou/blog?branch=master)
 
 demo for using [Router](https://github.com/lloydzhou/router), [ActiveRecord](https://github.com/lloydzhou/activerecord) and [MicroTpl](https://github.com/lloydzhou/microtpl).
 
