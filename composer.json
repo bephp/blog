@@ -6,6 +6,7 @@
     },
     "require-dev":{
         "lloydzhou/request": "*",
+        "satooshi/php-coveralls": "*",
         "phpunit/phpunit": "*"
     }
 }
