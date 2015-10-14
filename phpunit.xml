@@ -12,7 +12,7 @@
          bootstrap="test/bootstrap.php"
         >
     <testsuites>
-        <testsuite name="Router Tests">
+        <testsuite name="Blog Tests">
             <directory>./test/</directory>
         </testsuite>
     </testsuites>
@@ -25,7 +25,7 @@
             <directory>.</directory>
             <exclude>
                 <directory>./vendor</directory>
-                <directory>./test</directory>
+                <directory>./index.php</directory>
             </exclude>
         </whitelist>
     </filter>
