@@ -18,11 +18,15 @@
     </testsuites>
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml" />
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
     </logging>
     <filter>
         <whitelist>
-            <file>./router.php</file>
-            <file>./crouter.php</file>
+            <directory>.</directory>
+            <directory>./vendor/lloydzhou</directory>
+            <exclude>
+                <directory>./vendor</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
