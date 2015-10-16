@@ -39,6 +39,8 @@
 					 <li><a href="#">Cras ornare tristiqu</a></li>
 					 </ul>
 				 </div>
+				 <div tal:replace="$tags" class="recent">
+				 </div>
 				 <div tal:replace="$recentComment" class="comments">
 					 <h3>RECENT COMMENTS</h3>
 					 <ul>
@@ -57,7 +59,7 @@
 					 <li><a href="#">July 2013</a></li>
 					 </ul>
 				 </div>
-				 <div class="categories">
+				 <div tal:replace="$categories" class="categories">
 					 <h3>CATEGORIES</h3>
 					 <ul>
 					 <li><a href="#">Vivamus vestibulum nulla</a></li>

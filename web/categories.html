@@ -1,0 +1,7 @@
+<div class="recent">
+  <h3>CATIGORIES</h3>
+  <ul tal:condition="isset($categories)">
+    <li tal:repeat="$categories as $category"><a tal:href="$category->url()" tal:content="$category->name. '('. $category->count. ')'" href="#">Aliquam tincidunt mauris</a></li>
+  </ul>
+</div>
+

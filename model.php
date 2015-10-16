@@ -12,6 +12,7 @@ class Post extends ActiveRecord{
     public $table = 'post';
     public $relations = array(
         'tags' => array(self::HAS_MANY, 'Post2Tag', 'post_id'),
+        'comments' => array(self::HAS_MANY, 'Comment', 'post_id'),
         'author' => array(self::BELONGS_TO, 'User', 'user_id'),
     );
     public function url(){ return '/post/'. $this->id . '/view'; }
@@ -22,6 +23,13 @@ class Post extends ActiveRecord{
         return array_map(function($tag){
             return $tag->tag->name;
         }, $this->tags);
+    }
+    function updateCategory(){
+        $category = (new Category)->eq('id', $this->category_id)->find();
+        $category->count = $category->count + 1;
+        $category->update();
+        return $this;
+        //(new Category)->set('count', 'count+1')->eq('id', $this->id)->update();
     }
     function updateTag($tags){
         $tags = array_map(function($t){ return trim($t); }, explode(',', $tags));
@@ -57,6 +65,22 @@ class Post extends ActiveRecord{
     }
 }
 
+class Comment extends ActiveRecord{
+    public $table = 'comments';
+    public $relations = array(
+        'post' => array(self::BELONGS_TO, 'Post', 'post_id'),
+    );
+    public function url(){ return '/post/'. $this->post_id. '/view#comment-'. $this->id; }
+    public function posturl(){ return '/post/'. $this->post_id. '/view'; }
+    public function sumarry(){ return $this->content; }
+}
+class Category extends ActiveRecord{
+    public $table = 'category';
+    public $relations = array(
+        'posts' => array(self::HAS_MANY, 'Post', 'category_id'),
+    );
+    public function url(){ return '/category/'. $this->id. '/post'; }
+}
 class Tag extends ActiveRecord{
     public $table = 'tag';
     public $relations = array(
