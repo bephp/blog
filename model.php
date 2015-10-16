@@ -14,8 +14,10 @@ class Post extends ActiveRecord{
         'tags' => array(self::HAS_MANY, 'Post2Tag', 'post_id'),
         'comments' => array(self::HAS_MANY, 'Comment', 'post_id'),
         'author' => array(self::BELONGS_TO, 'User', 'user_id'),
+        'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
     );
     public function url(){ return '/post/'. $this->id . '/view'; }
+    public function img(){ return '/web/images/post1.jpg'; }
     public function showTime(){ return date('M, d Y', $this->time); }
     public function commentCount(){ return '1 comments';}
     public function summary(){ return strlen($this->content) > 300?substr($this->content, 0, 300). '...': $this->content;}

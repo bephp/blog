@@ -44,11 +44,15 @@ class Controller extends BaseController {
     }
 }
 class PostController extends Controller{
-    public function listall($tagid=null, $categoryid=null){
+    public function listall($tagid=null, $categoryid=null, $userid){
         if ($categoryid){
             $category = (new Category())->eq('id', intval($categoryid))->find();
             $this->title = $category->name;
             $this->posts = $category->posts;
+        }elseif ($userid){
+            $user = (new user())->eq('id', intval($userid))->find();
+            $this->title = $user->name;
+            $this->posts = $user->posts;
         }elseif ($tagid){
             $tag = (new Tag())->eq('id', intval($tagid))->find();
             $this->title = $tag->tag->name;
@@ -64,6 +68,51 @@ class PostController extends Controller{
     public function view($id){
         $this->post = (new Post())->find(intval($id));
         $this->initSilder();
+        $this->render('post.html');
+    }
+    public function create($router, $user_id, $category_id, $category, $title, $content, $tag){
+        if ($user_id){
+            if ($category){
+                $cate = (new Category)->eq('name', $category)->find();
+                if (!$cate->id) {
+                    $cate->name = $category;
+                    $cate->count = 0;
+                    $cate->insert();
+                }
+            }
+            $category_id = $cate->id;
+            $post = new Post(array('user_id'=>(int)($user_id), 'category_id'=>intval($category_id), 'title'=>$title, 'content'=>$content, 'time'=>time()));
+            $post->insert()->updateTag($tag)->updateCategory();
+            $router->error(302, '/post/'. $post->id. '/view', true);
+        }
+        $this->initSilder();
+        $this->cates = (new Category)->findAll();
+        $this->user = (new User)->find(1);
+        $this->render('post.html');
+    }
+    public function edit($id, $router, $user_id, $category_id, $category, $title, $content, $tag){
+        $this->post = $post = (new Post())->find(intval($id));
+        if ($user_id){
+            if ($category){
+                $cate = (new Category)->eq('name', $category)->find();
+                if (!$cate->id) {
+                    $cate->name = $category;
+                    $cate->count = 0;
+                    $cate->insert();
+                }
+                if ($category_id != $cate->id){
+                    (new Category)->set('count=count-1')->update();
+                    $category_id = $cate->id;
+                    $post->updateCategory();
+                }
+            }
+            $post->dirty(array('user_id'=>(int)($user_id), 'category_id'=>intval($category_id), 'title'=>$title, 'content'=>$content, 'time'=>time()));
+            $post->update()->updateTag($tag);
+            $router->error(302, '/post/'. $post->id. '/view', true);
+        }
+        $this->initSilder();
+        $this->cates = (new Category)->findAll();
+        $this->user = $this->post->author;
         $this->render('post.html');
     }
 }

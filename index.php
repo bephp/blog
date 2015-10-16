@@ -51,42 +51,20 @@ $router->execute();
 
     $router->error(302, '/posts', true);
 })
-->get('/tags', function(){
-    MicroTpl::render('web/list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()), 'web/layout.html');
-})
-->get('/user/:id/post', function($id){
-    MicroTpl::render('web/list.html', array('posts'=>get_user($id)->posts), 'web/layout.html');
-})
+->get('/user/:userid/post', array(new PostController, 'listall'))
 ->get('/tag/:tagid/post', array(new PostController, 'listall'))
 ->get('/category/:categoryid/post', array(new PostController, 'listall'))
 ->get('/posts', array(new PostController(), 'listall'))
-->get('/post/create', function(){
-    MicroTpl::render('post.html', array('user'=>get_user()));
-})
-->post('/post/create', function($router, $user_id, $title, $content, $tag){
-    // another way to init model.
-    $post = new Post(array('user_id'=>(int)($user_id), 'title'=>$title, 'content'=>$content, 'time'=>time()));
-    $post->insert();
-    $router->error(302, '/post/'. $post->updateTag($tag)->id. '/view');
-})
+->get('/post/create', array(new PostController(), 'create'), 'auth')
+->post('/post/create', array(new PostController(), 'create'), 'auth')
 ->get('/post/:id/delete', function($id, $router){
     $post = get_post($id);
     $post->updateTag('');
     $post->delete();
     $router->error(302, '/posts');
-})
-->get('/post/:id/edit', function($id){
-    $post = get_post($id);
-    MicroTpl::render('post.html', array('user'=>$post->author, 'post'=>$post));
-})
-->post('/post/:id/edit', function($id, $router, $title, $content, $tag){
-    $post = get_post($id);
-    $post->title = $title;
-    $post->content = $content;
-    $post->update();
-    $post->updateTag($tag);
-    $router->error(302, '/post/'. $post->id. '/view');
-})
+}, 'auth')
+->get('/post/:id/edit', array(new PostController, 'edit'), 'auth')
+->post('/post/:id/edit', array(new PostController, 'edit'), 'auth')
 ->get('/post/:id/view', array(new PostController, 'view'))
 ->execute(array());
 

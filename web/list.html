@@ -4,7 +4,7 @@
 			 <div class="col-md-8 content-main">
 				 <div class="content-grid" tal:condition="isset($posts)">
            <div class="content-grid-info" tal:repeat="$posts as $i => $post">
-             <img tal:src="isset($post->img) ? $post->img : '/web/images/post1.jpg'" src="/web/images/post1.jpg" tal:alt="$post->title" />
+             <img tal:src="$post->img()" src="/web/images/post1.jpg" tal:alt="$post->title" />
 						 <div class="post-info">
                <h4><a tal:href="$post->url()" tal:content="$post->title" href="single.html">Lorem ipsum dolor sit amet</a>  <span tal:content="$post->showTime()">July 30, 2014</span> / <span tal:content="$post->commentCount()">27 Comments</span></h4>
                <p tal:content="$post->summary()">Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis.</p>
