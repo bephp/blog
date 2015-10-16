@@ -1,5 +1,5 @@
 <?php 
-include('classes.php');
+include('model.php');
 
 ActiveRecord::setDb(new PDO('sqlite:blog.db'));
 MicroTpl::$debug = true;
