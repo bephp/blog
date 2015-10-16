@@ -1,79 +1,9 @@
 <?php 
-require_once('vendor/autoload.php');
+include('classes.php');
 
 ActiveRecord::setDb(new PDO('sqlite:blog.db'));
 MicroTpl::$debug = true;
 
-class User extends ActiveRecord{
-    public $table = 'user';
-    public $relations = array(
-        'posts' => array(self::HAS_MANY, 'Post', 'user_id'),
-    );
-}
-
-class Post extends ActiveRecord{
-    public $table = 'post';
-    public $relations = array(
-        'tags' => array(self::HAS_MANY, 'Post2Tag', 'post_id'),
-        'author' => array(self::BELONGS_TO, 'User', 'user_id'),
-    );
-    public function getTags(){
-        return array_map(function($tag){
-            return $tag->tag->name;
-        }, $this->tags);
-    }
-    function updateTag($tags){
-        $tags = array_map(function($t){ return trim($t); }, explode(',', $tags));
-        $tags = array_filter($tags, function($t){ return strlen($t)>0; });
-        foreach($this->tags as $i=>$tag){
-            $key = array_search($tag->tag->name, $tags);
-            if (false === $key){
-                $tag->tag->count = $tag->tag->count - 1;
-                if ($tag->tag->count > 0)
-                    $tag->tag->update();
-                else
-                    $tag->tag->delete();
-                $tag->delete();
-            } else unset($tags[$key]);//do not change tag
-        }
-        foreach($tags as $i=>$t){
-            $tag = new Tag();
-            $post2tag = new Post2Tag();
-            $tag->reset()->eq('name', $t)->find();
-            if (!$tag->id){
-                $tag->name = $t;
-                $tag->count = 1;
-                $tag->insert();
-            }else{
-                $tag->count = $tag->count + 1;
-                $tag->update();
-            }
-            $post2tag->tag_id = $tag->id;
-            $post2tag->post_id = $this->id;
-            $post2tag->insert();
-        }
-        return $this;
-    }
-}
-
-class Tag extends ActiveRecord{
-    public $table = 'tag';
-}
-
-class Post2Tag extends ActiveRecord{
-    public $table = 'post_tag';
-    public $relations = array(
-        'post' => array(self::BELONGS_TO, 'Post', 'post_id'),
-        'tag' => array(self::BELONGS_TO, 'Tag', 'tag_id'),
-    );
-}
-
-function get_post($id=null){
-    return (new Post())->eq('id', (int)($id?$id:1))->find();
-}
-function get_user($id=null){
-    return (new User())->eq('id', (int)($id?$id:1))->find();
-}
 /**
  * PRODUCTION
  * after compiled code to "index.inc", just need to include the source code and execute it with parameters.
@@ -109,20 +39,21 @@ $router->execute();
     $user->email = 'admin@example.com';
     $user->password = md5('admin');
     $user->insert();
-    $router->error(302, '/posts');
+    //$router->error(302, '/posts');
+    MicroTpl::render('web/list.html', array(), 'web/layout.html');
 })
 ->get('/tags', function(){
-    MicroTpl::render('list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()));
+    MicroTpl::render('web/list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()), 'web/layout.html');
 })
 ->get('/user/:id/post', function($id){
-    MicroTpl::render('list.html', array('posts'=>get_user($id)->posts));
+    MicroTpl::render('web/list.html', array('posts'=>get_user($id)->posts), 'web/layout.html');
 })
 ->get('/tag/:id/post', function($id){
     $tags = (new Post2Tag())->eq('tag_id', (int)$id)->findAll();
-    MicroTpl::render('list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)));
+    MicroTpl::render('web/list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)), 'web/layout.html');
 })
 ->get('/posts', function(){
-    MicroTpl::render('list.html', array('posts'=>(new Post())->orderby('time desc')->findAll()));
+    MicroTpl::render('web/list.html', array('title'=>'Blog Name', 'posts'=>(new Post())->orderby('time desc')->findAll()), 'web/layout.html');
 })
 ->get('/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
@@ -152,7 +83,8 @@ $router->execute();
     $router->error(302, '/post/'. $post->id. '/view');
 })
 ->get('/post/:id/view', function($id){
-    MicroTpl::render('post.html', array('post'=>get_post($id)));
+    $post = get_post($id);
+    MicroTpl::render('web/post.html', array('title'=>$post->title, 'post'=>$post), 'web/layout.html');
 })
 ->execute(array());
 
