@@ -1,0 +1,7 @@
+<div class="recent">
+  <h3>RECENT POSTS</h3>
+  <ul>
+    <li tal:repeat="$posts as $post"><a tal:href="$post->url()" tal:content="$post->title" href="#">Aliquam tincidunt mauris</a></li>
+  </ul>
+</div>
+

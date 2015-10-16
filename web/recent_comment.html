@@ -1,0 +1,9 @@
+<div class="comments">
+  <h3>RECENT COMMENTS</h3>
+  <ul tal:condition="isset($comments)">
+    <li tal:repeat="$comments as $comment">
+    <a tal:href="$comment->url()" tal:content="$comment->sumarry()" href="#">Amada Doe </a> on <a tal:href="$comment->posturl()" tal:content="$comment->post->title" href="#">Hello World!</a>
+    </li>
+  </ul>
+</div>
+

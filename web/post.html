@@ -30,7 +30,7 @@
 			 </div>
 
 			  <div class="col-md-4 side-content">
-				 <div class="recent">
+				 <div tal:replace="$recentPost" class="recent">
 					 <h3>RECENT POSTS</h3>
 					 <ul>
 					 <li><a href="#">Aliquam tincidunt mauris</a></li>
@@ -39,7 +39,7 @@
 					 <li><a href="#">Cras ornare tristiqu</a></li>
 					 </ul>
 				 </div>
-				 <div class="comments">
+				 <div tal:replace="$recentComment" class="comments">
 					 <h3>RECENT COMMENTS</h3>
 					 <ul>
 					 <li><a href="#">Amada Doe </a> on <a href="#">Hello World!</a></li>

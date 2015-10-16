@@ -1,10 +1,10 @@
 <div class="content">
   <div class="container">
-      <div class="content-grids" tal:data="$title">
+      <div class="content-grids">
 			 <div class="col-md-8 content-main">
 				 <div class="content-grid" tal:condition="isset($posts)">
            <div class="content-grid-info" tal:repeat="$posts as $i => $post">
-             <img tal:src="isset($post->img) ? $post->img : 'web/images/post1.jpg'" src="web/images/post1.jpg" tal:alt="$post->title" />
+             <img tal:src="isset($post->img) ? $post->img : '/web/images/post1.jpg'" src="/web/images/post1.jpg" tal:alt="$post->title" />
 						 <div class="post-info">
                <h4><a tal:href="$post->url()" tal:content="$post->title" href="single.html">Lorem ipsum dolor sit amet</a>  <span tal:content="$post->showTime()">July 30, 2014</span> / <span tal:content="$post->commentCount()">27 Comments</span></h4>
                <p tal:content="$post->summary()">Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis.</p>
@@ -14,7 +14,7 @@
 				 </div>
 			  </div>
 			  <div class="col-md-4 content-right">
-				 <div class="recent">
+				 <div tal:replace="$recentPost" class="recent">
 					 <h3>RECENT POSTS</h3>
 					 <ul>
 					 <li><a href="#">Aliquam tincidunt mauris</a></li>
@@ -23,7 +23,16 @@
 					 <li><a href="#">Cras ornare tristiqu</a></li>
 					 </ul>
 				 </div>
-				 <div class="comments">
+				 <div tal:replace="$tags" class="recent">
+					 <h3>TAGS</h3>
+					 <ul>
+					 <li><a href="#">Aliquam tincidunt mauris</a></li>
+					 <li><a href="#">Vestibulum auctor dapibus  lipsum</a></li>
+					 <li><a href="#">Nunc dignissim risus consecu</a></li>
+					 <li><a href="#">Cras ornare tristiqu</a></li>
+					 </ul>
+				 </div>
+				 <div tal:replace="$recentComment" class="comments">
 					 <h3>RECENT COMMENTS</h3>
 					 <ul>
 					 <li><a href="#">Amada Doe </a> on <a href="#">Hello World!</a></li>

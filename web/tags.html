@@ -1,0 +1,7 @@
+<div class="recent">
+  <h3>TAGS</h3>
+  <ul tal:condition="isset($tags)">
+    <li tal:repeat="$tags as $tag"><a tal:href="$tag->url()" tal:content="$tag->name. '('. $tag->count. ')'" href="#">Aliquam tincidunt mauris</a></li>
+  </ul>
+</div>
+

@@ -1,5 +1,6 @@
 <?php 
 include('model.php');
+include('controller.php');
 
 ActiveRecord::setDb(new PDO('sqlite:blog.db'));
 MicroTpl::$debug = true;
@@ -24,6 +25,7 @@ $router->execute();
 })
 ->error(405, function($message){
     header("Location: /posts", true, 302);
+    die('aaa');
 })
 ->delete('/uninstall', function($router){
     @unlink('blog.db');
@@ -39,8 +41,7 @@ $router->execute();
     $user->email = 'admin@example.com';
     $user->password = md5('admin');
     $user->insert();
-    //$router->error(302, '/posts');
-    MicroTpl::render('web/list.html', array(), 'web/layout.html');
+    $router->error(302, '/posts');
 })
 ->get('/tags', function(){
     MicroTpl::render('web/list.html', array('tags'=>(new Tag())->orderby('count desc')->findAll()), 'web/layout.html');
@@ -48,13 +49,8 @@ $router->execute();
 ->get('/user/:id/post', function($id){
     MicroTpl::render('web/list.html', array('posts'=>get_user($id)->posts), 'web/layout.html');
 })
-->get('/tag/:id/post', function($id){
-    $tags = (new Post2Tag())->eq('tag_id', (int)$id)->findAll();
-    MicroTpl::render('web/list.html', array('posts'=>array_map(function($t){ return $t->post; }, $tags)), 'web/layout.html');
-})
-->get('/posts', function(){
-    MicroTpl::render('web/list.html', array('title'=>'Blog Name', 'posts'=>(new Post())->orderby('time desc')->findAll()), 'web/layout.html');
-})
+->get('/tag/:tagid/post', array(new PostController, 'listall'))
+->get('/posts', array(new PostController(), 'listall'))
 ->get('/post/create', function(){
     MicroTpl::render('post.html', array('user'=>get_user()));
 })
@@ -84,7 +80,7 @@ $router->execute();
 })
 ->get('/post/:id/view', function($id){
     $post = get_post($id);
-    MicroTpl::render('web/post.html', array('title'=>$post->title, 'post'=>$post), 'web/layout.html');
+    MicroTpl::render('web/post.html', array('title'=>$post->title, 'post'=>$post, 'recentPost'=>new RecentPost, 'recentComment'=>new RecentComment), 'web/layout.html');
 })
 ->execute(array());
 
