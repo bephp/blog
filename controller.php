@@ -8,27 +8,39 @@ class BaseController extends Base{
     }
 }
 /* widgets */
-class RecentPost extends BaseController{
+class Widget extends BaseController{
     public function __toString(){
-        return $this->render('recent_post.html', array('posts'=>(new Post)->orderby('time desc')->limit(0, 5)->findAll()), '', 'web/', true);
+        if ($content = cache(get_class($this))) return $content;
+        $this->run();
+        $content = $this->render($this->template, array(), '', 'web/', true);
+        return cache(get_class($this), $content);
     }
 }
-class Tags extends BaseController{
-    public function __toString(){
-        return $this->render('tags.html', array('tags'=>(new Tag)->orderby('count desc')->findAll()), '', 'web/', true);
+class RecentPost extends Widget{
+    public function run(){
+        $this->template = 'recent_post.html';
+        $this->posts = (new Post)->orderby('time desc')->limit(0, 5)->findAll();
     }
 }
-class Categories extends BaseController{
-    public function __toString(){
-        return $this->render('categories.html', array('categories'=>(new Category)->orderby('count desc')->findAll()), '', 'web/', true);
+class Tags extends Widget{
+    public function run(){
+        $this->template = 'tags.html';
+        $this->tags = (new Tag)->orderby('count desc')->findAll();
     }
 }
-class RecentComment extends BaseController{
-    public function __toString(){
-        return $this->render('recent_comment.html', array('comments'=>(new Comment)->orderby('time desc')->limit(0, 5)->findAll()), '', 'web/', true);
+class Categories extends Widget{
+    public function run(){
+        $this->template = 'categories.html';
+        $this->categories = (new Category)->orderby('count desc')->findAll();
     }
 }
-class Archives extends BaseController{
+class RecentComment extends Widget{
+    public function run(){
+        $this->template = 'recent_comment.html';
+        $this->comments = (new Comment)->orderby('time desc')->limit(0, 5)->findAll();
+    }
+}
+class Archives extends Widget{
     public function __toString(){
         return '';
     }
@@ -50,7 +62,7 @@ class PostController extends Controller{
             $this->title = $category->name;
             $this->posts = $category->posts;
         }elseif ($userid){
-            $user = (new user())->eq('id', intval($userid))->find();
+            $this->user = $user = (new user())->eq('id', intval($userid))->find();
             $this->title = $user->name;
             $this->posts = $user->posts;
         }elseif ($tagid){

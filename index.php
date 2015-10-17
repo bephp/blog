@@ -19,6 +19,15 @@ $router->execute();
  * using CRouter to compile plain array source code into "index.inc"
  */
 (new CRouter('index.inc', true))
+->hook('after', function(){
+    echo ob_get_clean();
+})
+->hook('before', function($params){
+    $key = md5(var_export(path(), true));
+    if ($html = cache($key)) die($html);
+    ob_start(function($str) use ($key) {echo cache($key, $str);});
+    return $params;
+})
 ->error(302, function($path, $halt=false){
     header("Location: {$path}", true, 302);
     $halt && exit();

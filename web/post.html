@@ -1,5 +1,4 @@
 <div class="single">
-   <script type="text/javascript" src="/web/js/mmd.js"></script>
 	 <div class="container">
 		  <div tal:condition="!isset($user)" class="col-md-8 single-main">				 
 			  <div class="single-grid">
@@ -10,7 +9,7 @@
 			  </div>
 			 <ul  tal:condition="!isset($user)" class="comment-list">
          <h5 class="post-author_head">Written by <a href="/posts" title="Posts by admin" rel="author" tal:content="$post->author->name">admin</a></h5>
-         <li tal:repeat="$post->comments as $i=>$comment">
+         <li tal:id="'comment-'. $comment->id" tal:repeat="$post->comments as $i=>$comment">
            <img src="/web/images/avatar.png" class="img-responsive" alt="" />
 		 	     <div class="desc">
              <p tal:content="$comment->content">View all posts by: <a href="#" title="comments by admin" rel="author" tal:content="$comment->name">admin</a></p>

@@ -17,6 +17,7 @@ class Post extends ActiveRecord{
         'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
     );
     public function url(){ return '/post/'. $this->id . '/view'; }
+    public function editurl(){ return '/post/'. $this->id . '/edit'; }
     public function img(){
         if (preg_match( '/src="([^"]*)"/i', $this->comment, $match))
             return $match[1];

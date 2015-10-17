@@ -7,8 +7,9 @@
              <img tal:src="$post->img()" src="/web/images/post1.jpg" tal:alt="$post->title" />
 						 <div class="post-info">
                <h4><a tal:href="$post->url()" tal:content="$post->title" href="single.html">Lorem ipsum dolor sit amet</a>  <span tal:content="$post->showTime()">July 30, 2014</span> / <span tal:content="$post->commentCount()">27 Comments</span></h4>
-               <p tal:content="$post->summary()">Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis.</p>
+               <p class="post-summary" tal:content="$post->summary()">Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis.</p>
                <a tal:href="$post->url()" href="single.html"><span></span>READ MORE</a>
+               <a style="float:right" tal:condition="isset($user)" tal:href="$post->editurl()" href="single.html"><span></span>EDIT</a>
 						 </div>
 					 </div>
 				 </div>
@@ -64,5 +65,10 @@
 			  <div class="clearfix"></div>
 		  </div>
   </div>
+  <script>
+    $('.post-summary').each(function(i,n){
+        $(n).html(mmd($(n).text()))
+    })
+  </script>
 </div>
 
