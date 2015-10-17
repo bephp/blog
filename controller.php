@@ -79,8 +79,8 @@ class PostController extends Controller{
                     $cate->count = 0;
                     $cate->insert();
                 }
+                $category_id = $cate->id;
             }
-            $category_id = $cate->id;
             $post = new Post(array('user_id'=>(int)($user_id), 'category_id'=>intval($category_id), 'title'=>$title, 'content'=>$content, 'time'=>time()));
             $post->insert()->updateTag($tag)->updateCategory();
             $router->error(302, '/post/'. $post->id. '/view', true);

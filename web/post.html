@@ -1,10 +1,12 @@
 <div class="single">
+   <script type="text/javascript" src="/web/js/mmd.js"></script>
 	 <div class="container">
 		  <div tal:condition="!isset($user)" class="col-md-8 single-main">				 
 			  <div class="single-grid">
           <img tal:src="$post->img()" src="images/post1.jpg" tal:alt="$post->title" />						 					 
-          <p tal:content="$post->content">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Nullam a efficitur odio, ac maximus lorem. Nullam aliquam fermentum lectus ut sagittis. Sed pulvinar sed ligula gravida condimentum. Proin eleifend vestibulum tortor, ut pellentesque lorem tempor a. Nunc pharetra lacus at laoreet suscipit. Aliquam tempor mattis sagittis. Mauris viverra mi quis risus molestie placerat. Sed accumsan vestibulum fringilla. Etiam dapibus tellus ac eros placerat, at aliquam arcu lobortis. Vestibulum sollicitudin mauris dui, a tempor metus lacinia sed. Nam a auctor purus, nec rutrum ipsum. Maecenas lacus ex, finibus non tempor at, ultrices id sem. Suspendisse et magna et tellus facilisis lacinia at et diam. Fusce finibus ullamcorper ligula non tristique. Nulla facilisi. Donec ultricies nisi vel quam venenatis efficitur. Praesent porta risus arcu, at egestas ante accumsan eu. 
+          <p id="post-content" tal:content="$post->content">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Nullam a efficitur odio, ac maximus lorem. Nullam aliquam fermentum lectus ut sagittis. Sed pulvinar sed ligula gravida condimentum. Proin eleifend vestibulum tortor, ut pellentesque lorem tempor a. Nunc pharetra lacus at laoreet suscipit. Aliquam tempor mattis sagittis. Mauris viverra mi quis risus molestie placerat. Sed accumsan vestibulum fringilla. Etiam dapibus tellus ac eros placerat, at aliquam arcu lobortis. Vestibulum sollicitudin mauris dui, a tempor metus lacinia sed. Nam a auctor purus, nec rutrum ipsum. Maecenas lacus ex, finibus non tempor at, ultrices id sem. Suspendisse et magna et tellus facilisis lacinia at et diam. Fusce finibus ullamcorper ligula non tristique. Nulla facilisi. Donec ultricies nisi vel quam venenatis efficitur. Praesent porta risus arcu, at egestas ante accumsan eu. 
 					 Phasellus et lacus quis lacus imperdiet fermentum eu a enim. Praesent non lorem rhoncus, cursus leo nec, pellentesque dui..</p>
+        <script type="text/javascript">document.querySelector('#post-content').innerHTML=mmd(document.querySelector('#post-content').innerHTML)</script>
 			  </div>
 			 <ul  tal:condition="!isset($user)" class="comment-list">
          <h5 class="post-author_head">Written by <a href="/posts" title="Posts by admin" rel="author" tal:content="$post->author->name">admin</a></h5>
@@ -34,7 +36,9 @@
 			    <div class="content-form">
         <h3 tal:condition="isset($post)" tal:content="'Edit '. $post->title">Edit a Post</h3>
 					  <h3 tal:condition="!isset($post)">Create a Post</h3>
-					  <form method="POST">
+              <div data-toggle="pen" data-placeholder="im a placeholder">
+              </div> 
+					  <form method="POST" id="post-form">
               <input type="hidden" name="user_id" tal:value="$user->id" required="required" />
               <input type="text" name="title" tal:value="isset($post)?$post->title:''" placeholder="Title" />
 						  <input type="text" name="category" placeholder="New Category OR Select one" />
@@ -43,10 +47,31 @@
                 <option tal:repeat="$cates as $category" tal:content="$category->name" tal:value="$category->id"> ---- </option>
               </select>
               <input type="text" name="tag" tal:value="isset($post)?implode(', ', $post->getTags()):''" placeholder="Tags (split with ',')" required="required" />
-              <textarea name="content" tal:content="isset($post)?$post->content:''" placeholder="Content"></textarea>
+              <textarea name="content" tal:content='isset($post)?$post->content:"Post Content"' style="display:none" placeholder="Content"></textarea>
 						  <input type="submit" value="SEND" />
 				   </form>
 		       </div>
+
+           <link rel="stylesheet" href="/web/css/pen.css" />
+           <script src="/web/js/pen.js"></script>
+           <script src="/web/js/markdown.js"></script>
+           <script type="text/javascript">
+             // init the editor by given content.
+             document.querySelector('[data-toggle="pen"]').innerHTML = mmd(document.querySelector('[name="content"]').innerHTML);
+             // create editor
+             var pen = window.pen = new Pen({editor: document.querySelector('[data-toggle="pen"]'), debug: true, list: [
+                 'insertimage', 'blockquote', 'h2', 'h3', 'p', 'code', 'insertorderedlist', 'insertunorderedlist', 'inserthorizontalrule',
+                 'indent', 'outdent', 'bold', 'italic', 'underline', 'createlink'
+                 ]});
+           
+             pen.focus();
+
+             document.querySelector('#post-form').addEventListener('submit', function(){
+                 document.querySelector('[name="content"]').innerHTML = pen.toMd();
+             })
+           
+           </script>
+
 			  </div>
 			  </div>
 

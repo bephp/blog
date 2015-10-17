@@ -54,9 +54,9 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 				 </div>
 				  <span class="menu"> </span> 
 				   <ul>
-						<li class="active"><a href="/">HOME</a></li>						
-						<li><a href="about">ABOUT</a></li>	
-						<li><a href="contact">CONTACT</a></li>						
+						<li tal:class="!isset($page) ? 'active':''" class="active"><a href="/">HOME</a></li>						
+						<li tal:class="isset($page)?($page == 'about'  ? 'active' : ''):''" ><a href="/about">ABOUT</a></li>	
+						<li tal:class="isset($page)?($page == 'contact'? 'active' : ''):''" ><a href="/contact">CONTACT</a></li>						
 						<div class="clearfix"> </div>
 				 </ul>
 			 </div>

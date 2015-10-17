@@ -436,7 +436,7 @@ font-family: 'Lato', sans-serif;
 .desc p a:hover{
 color: #848484;
 }
-.content-form form input[type="text"], .content-form form textarea, .content-form form select {
+.content-form form input[type="text"], .content-form form textarea, .content-form form select, .content-form .pen {
 padding: 10px 15px;
 width: 100%;
 color: #333;

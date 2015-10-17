@@ -54,6 +54,7 @@ $router->execute();
 ->get('/user/:userid/post', array(new PostController, 'listall'))
 ->get('/tag/:tagid/post', array(new PostController, 'listall'))
 ->get('/category/:categoryid/post', array(new PostController, 'listall'))
+->get('/', array(new PostController(), 'listall'))
 ->get('/posts', array(new PostController(), 'listall'))
 ->get('/post/create', array(new PostController(), 'create'), 'auth')
 ->post('/post/create', array(new PostController(), 'create'), 'auth')
@@ -66,6 +67,7 @@ $router->execute();
 ->get('/post/:id/edit', array(new PostController, 'edit'), 'auth')
 ->post('/post/:id/edit', array(new PostController, 'edit'), 'auth')
 ->get('/post/:id/view', array(new PostController, 'view'))
+->get('/:page', function($page){MicroTpl::render('web/'. $page. '.html', array('page'=>$page), 'web/layout.html');})
 ->execute(array());
 
 
