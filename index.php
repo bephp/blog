@@ -1,4 +1,5 @@
 <?php 
+error_reporting(1);
 include('model.php');
 include('controller.php');
 
@@ -24,8 +25,8 @@ $router->execute();
 })
 ->hook('before', function($params){
     $key = md5(var_export(path(), true));
-    if ($html = cache($key)) die($html);
-    ob_start(function($str) use ($key) {echo cache($key, $str);});
+    if (($html = cache($key)) && $params['REQUEST_METHOD'] == 'GET') die($html);
+    ob_start(function($str) use ($key) {echo cache($key, $str, 10);});
     return $params;
 })
 ->error(302, function($path, $halt=false){

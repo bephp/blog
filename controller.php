@@ -10,10 +10,10 @@ class BaseController extends Base{
 /* widgets */
 class Widget extends BaseController{
     public function __toString(){
-        if ($content = cache(get_class($this))) return $content;
+        if ($content = mcache(get_class($this))) return $content;
         $this->run();
         $content = $this->render($this->template, array(), '', 'web/', true);
-        return cache(get_class($this), $content);
+        return mcache(get_class($this), $content);
     }
 }
 class RecentPost extends Widget{
