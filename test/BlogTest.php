@@ -20,7 +20,7 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
      * @depends testInstall
      */
     public function testPostCreate(){
-        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/create', array('title'=>'test title', 'content' => 'test content', 'tag' => 'test,title,content'));
+        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/create', array('title'=>'test title', 'content' => 'test content', 'tag' => 'test,title,content', 'user_id'=>1, 'category_id'=>1));
         $this->assertEquals(302, $response->getHttpCode());
         $this->assertEmpty($response->getContent());
         $this->assertRegExp('@/post/([0-9]+)/view@', $response->getHeader()->getLocation());
@@ -32,7 +32,7 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
      * @depends testPostCreate
      */
     public function testPostEdit($postId){
-        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/'. $postId. '/edit', array('id' => $postId, 'title'=>'title', 'content' => 'content', 'tag' => 'test,title,content,edit'));
+        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/'. $postId. '/edit', array('id' => $postId, 'title'=>'title', 'content' => 'content', 'tag' => 'test,title,content,edit', 'user_id'=>1, 'category_id'=>2));
         $this->assertEquals(302, $response->getHttpCode());
         $this->assertEmpty($response->getContent());
         $this->assertRegExp('@/post/([0-9]+)/view@', $response->getHeader()->getLocation());
@@ -46,9 +46,9 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
     public function testPostView($postId){
         $response = $this->getRequest()->get('http://127.0.0.1:8889/post/'. $postId. '/view');
         $this->assertEquals(200, $response->getHttpCode());
-        $this->assertRegExp('@<h1>title</h1>@', $response->getContent());
-        $this->assertRegExp('@<pre>content</pre>@', $response->getContent());
-        $this->assertEquals(4, preg_match_all('@/tag/([0-9]+)/post@', $response->getContent(), $match));
+        //$this->assertRegExp('@<h1>title</h1>@', $response->getContent());
+        $this->assertRegExp('@<p id="post-content">content</p>@', $response->getContent());
+        $this->assertEquals(6, preg_match_all('@/tag/([0-9]+)/post@', $response->getContent(), $match));
         return $match[1];
     }
     /**
@@ -59,8 +59,8 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
         foreach($tagIds as $tagId){
             $response = $this->getRequest()->get('http://127.0.0.1:8889/tag/'. $tagId. '/post');
             $this->assertEquals(200, $response->getHttpCode());
-            $this->assertRegExp('@<h2>title</h2>@', $response->getContent());
-            $this->assertRegExp('@<pre>content</pre>@', $response->getContent());
+            $this->assertRegExp('@title</a>@', $response->getContent());
+            $this->assertRegExp('@<p class="post-summary">(.*)</p>@', $response->getContent());
         }
     }
     /**
@@ -70,17 +70,8 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
     public function testPosts(){
         $response = $this->getRequest()->get('http://127.0.0.1:8889/posts/');
         $this->assertEquals(200, $response->getHttpCode());
-        $this->assertRegExp('@<h2>title</h2>@', $response->getContent());
-        $this->assertRegExp('@<pre>content</pre>@', $response->getContent());
-    }
-    /**
-     * @requires PHP 5.4
-     * @depends testPostCreate
-     */
-    public function testTags(){
-        $response = $this->getRequest()->get('http://127.0.0.1:8889/tags');
-        $this->assertEquals(200, $response->getHttpCode());
-        $this->assertEquals(4, preg_match_all('@/tag/([0-9]+)/post@', $response->getContent(), $match));
+        $this->assertRegExp('@title</a>@', $response->getContent());
+        $this->assertRegExp('@<p class="post-summary">(.*)</p>@', $response->getContent());
     }
     /**
      * @requires PHP 5.4
