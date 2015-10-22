@@ -1,9 +1,9 @@
 {
     "require": {
-        "lloydzhou/micro": "^1.0"
+        "bephp/micro": "^1.0"
     },
     "require-dev":{
-        "lloydzhou/request": "*",
+        "bephp/request": "*",
         "satooshi/php-coveralls": "*",
         "phpunit/phpunit": "*"
     }
