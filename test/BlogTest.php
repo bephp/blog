@@ -10,6 +10,7 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
      * @requires PHP 5.4
      */
     public function testInstall(){
+        @unlink('blog.db');
         $response = $this->getRequest()->get('http://127.0.0.1:8889/install');
         $this->assertEquals(302, $response->getHttpCode());
         $this->assertEmpty($response->getContent());
@@ -32,7 +33,7 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
      * @depends testPostCreate
      */
     public function testPostEdit($postId){
-        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/'. $postId. '/edit', array('id' => $postId, 'title'=>'title', 'content' => 'content', 'tag' => 'test,title,content,edit', 'user_id'=>1, 'category_id'=>2));
+        $response = $this->getRequest()->post('http://127.0.0.1:8889/post/'. $postId. '/edit', array('id' => $postId, 'title'=>'title', 'content' => 'content', 'tag' => 'test,title,content,edit', 'user_id'=>1, 'category_id'=>1));
         $this->assertEquals(302, $response->getHttpCode());
         $this->assertEmpty($response->getContent());
         $this->assertRegExp('@/post/([0-9]+)/view@', $response->getHeader()->getLocation());
