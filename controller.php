@@ -41,8 +41,15 @@ class RecentComment extends Widget{
     }
 }
 class Archives extends Widget{
-    public function __toString(){
-        return '';
+    public function run(){
+        $this->template = 'archives.html';
+        $archives = array();
+        foreach((new Post())->orderby('time desc')->findAll() as $post){
+            if (($year = date('Y', $post->time)) && !isset($archives[$year])) $archives[$year] = array();
+            if (($month = date('M', $post->time)) && !isset($archives[$year][$month])) $archives[$year][$month] = 0;
+            $archives[$year][$month] += 1;
+        }
+        $this->archives = $archives;
     }
 }
 
