@@ -1,0 +1,9 @@
+<div class="comments">
+  <h3>ARCHIVES</h3>
+  <ul tal:condition="isset($archives)">
+    <li tal:repeat="$archives as $year => $archive">
+      <a tal:repeat="$archive as $month => $number" tal:content="$year. '-'. $month. '('. $number. ')' " href="#">Amada Doe </a>
+    </li>
+  </ul>
+</div>
+
