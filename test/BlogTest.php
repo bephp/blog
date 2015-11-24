@@ -81,7 +81,6 @@ class BlogTest extends \PHPUnit_Framework_TestCase{
     public function testPostDelete($postId){
         $response = $this->getRequest()->get('http://127.0.0.1:8889/post/'. $postId. '/delete');
         $this->assertEquals(302, $response->getHttpCode());
-        $this->assertEquals(302, $response->getHttpCode());
         $this->assertEmpty($response->getContent());
         $this->assertEquals('/posts', $response->getHeader()->getLocation());
     }

@@ -89,6 +89,10 @@ class PostController extends Controller{
         $this->initSilder();
         $this->render('post.html');
     }
+    public function delete($id, $router){
+        (new Post())->find(intval($id))->delete();
+        $router->error(302, '/posts');
+    }
     public function create($router, $user_id, $category_id, $category, $title, $content, $tag){
         if ($user_id){
             if ($category){

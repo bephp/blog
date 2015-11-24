@@ -104,10 +104,4 @@ class Post2Tag extends ActiveRecord{
     );
 }
 
-function get_post($id=null){
-    return (new Post())->eq('id', (int)($id?$id:1))->find();
-}
-function get_user($id=null){
-    return (new User())->eq('id', (int)($id?$id:1))->find();
-}
 

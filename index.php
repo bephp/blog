@@ -35,7 +35,7 @@ $router->execute();
 })
 ->error(405, function($message){
     header("Location: /posts", true, 302);
-    die('aaa');
+    die('405');
 })
 ->delete('/uninstall', function($router){
     @unlink('blog.db');
@@ -68,12 +68,7 @@ $router->execute();
 ->get('/posts', array(new PostController(), 'listall'))
 ->get('/post/create', array(new PostController(), 'create'), 'auth')
 ->post('/post/create', array(new PostController(), 'create'), 'auth')
-->get('/post/:id/delete', function($id, $router){
-    $post = get_post($id);
-    $post->updateTag('');
-    $post->delete();
-    $router->error(302, '/posts');
-}, 'auth')
+->get('/post/:id/delete', array(new PostController(), 'delete'), 'auth')
 ->get('/post/:id/edit', array(new PostController, 'edit'), 'auth')
 ->post('/post/:id/edit', array(new PostController, 'edit'), 'auth')
 ->get('/post/:id/view', array(new PostController, 'view'))
