@@ -56,9 +56,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase{
     // test hooks
     public function testBeforeHook(){
         $r = $this->router(); 
-        $r->hook('before', function($params){
-            $params['ext'] = 'json';
-            return $params;
+        $r->hook('before', function($router){
+            $router->params['ext'] = 'json';
         });
         $r->get('/hello/:name', function($name, $ext){ return $name. '.'. $ext; });
         $response = $r->execute(array('ext'=>'js'), 'GET', '/hello/lloyd');
@@ -66,7 +65,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase{
     }
     public function testCustomerHookHandleErrorOutside(){
         $r = $this->router(); 
-        $r->hook('auth', function($params){
+        $r->hook('auth', function($router){
             return false;
         });
         $r->get('/hello/:name', function($name, $ext){ return $name; }, array('auth'));
@@ -79,7 +78,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase{
     }
     public function testCustomerHookNotHandleInside(){
         $r = $this->router();
-        $r->hook('auth', function($params){
+        $r->hook('auth', function($router){
             return false;
         })->error(406, function($message){
             return $message;
