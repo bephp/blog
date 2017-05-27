@@ -1,5 +1,9 @@
 <?php 
 
+if (!class_exists('PHPUnit_Framework_TestCase')) {
+    class PHPUnit_Framework_TestCase extends \PHPUnit\Framework\TestCase {}
+}
+
 class BlogTest extends \PHPUnit_Framework_TestCase{
     // test in build-in server
     // see the server side code in "index.php" 
